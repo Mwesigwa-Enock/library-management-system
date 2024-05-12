@@ -22,30 +22,46 @@ public class BookController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create Book", description = "Returns book details")
     public ResponseEntity<GenericResponse> createBook(@RequestBody CreateBookRequest bookRequest) {
-        return new ResponseEntity<>(GenericResponse.builder().build(), HttpStatus.OK);
+        var response = bookService.createBook(bookRequest);
+        return new ResponseEntity<>(GenericResponse.builder()
+                .code(HttpStatus.OK.toString())
+                .message("Book created successfully")
+                .data(response)
+                .build(), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get All Books", description = "Returns a List of books")
     public ResponseEntity<List<BookModel>> getBooks() {
-        return new ResponseEntity<>(List.of(), HttpStatus.OK);
+        var books = bookService.getAllBooks();
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Operation(summary = "Get Book by Id", description = "Returns book details")
     public ResponseEntity<BookModel> getBookById(@PathVariable String id) {
-        return new ResponseEntity<>(BookModel.builder().build(), HttpStatus.OK);
+        var book = bookService.getBookById(id);
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Operation(summary = "Update Book by Id", description = "Returns book details")
     public ResponseEntity<GenericResponse> updateBookById(@PathVariable String id, @RequestBody BookModel bookModel) {
-        return new ResponseEntity<>(GenericResponse.builder().build(), HttpStatus.OK);
+        var updated = bookService.updateBook(bookModel, id);
+        return new ResponseEntity<>(GenericResponse.builder()
+                .code(HttpStatus.OK.toString())
+                .message("Book updated successfully")
+                .data(updated)
+                .build(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @Operation(summary = "Delete Book by Id", description = "Deletes book details")
     public ResponseEntity<GenericResponse> deleteBookById(@PathVariable String id) {
-        return new ResponseEntity<>(GenericResponse.builder().build(), HttpStatus.OK);
+        bookService.deleteBook(id);
+        return new ResponseEntity<>(GenericResponse.builder()
+                .code(HttpStatus.OK.toString())
+                .message("Book deleted successfully")
+                .build(), HttpStatus.OK);
     }
 }

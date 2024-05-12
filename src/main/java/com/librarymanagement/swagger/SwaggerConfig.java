@@ -23,7 +23,8 @@ public class SwaggerConfig {
         contact.setName("Library Management Service API");
         contact.setUrl("https://www.librarymanagement.com");
 
-        License mitLicense = new License().name("WM License").url("https://www.librarymanagement.com/licenses/");
+        License mitLicense = new License().name("Library Management Software License")
+                .url("https://www.librarymanagement.com/licenses/");
 
         Info info = new Info()
                 .title("Library Management Service")
