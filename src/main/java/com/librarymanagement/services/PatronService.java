@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class PatronService implements IPatronService {
         return null;
     }
 
+    @Transactional
     @Override
     public PatronModel createPatron(Patron patron) {
         return null;

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class BookService implements IBookService {
         return null;
     }
 
+    @Transactional
     @Override
     public BookModel createBook(Book book) {
         return null;
