@@ -33,6 +33,9 @@ public class Book {
     @Enumerated(EnumType.STRING)
     private BookStatus status;
 
+    @Column(name = "is_available")
+    private boolean isAvailable;
+
     private String createdBy;
     private String modifiedBy;
 
