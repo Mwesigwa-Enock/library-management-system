@@ -21,13 +21,9 @@ public class BookController {
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create Book", description = "Returns book details")
-    public ResponseEntity<GenericResponse> createBook(@RequestBody CreateBookRequest bookRequest) {
-        var response = bookService.createBook(bookRequest);
-        return new ResponseEntity<>(GenericResponse.builder()
-                .code(HttpStatus.OK.toString())
-                .message("Book created successfully")
-                .data(response)
-                .build(), HttpStatus.OK);
+    public ResponseEntity<BookModel> createBook(@RequestBody CreateBookRequest bookRequest) {
+        var book = bookService.createBook(bookRequest);
+        return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -46,13 +42,9 @@ public class BookController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Operation(summary = "Update Book by Id", description = "Returns book details")
-    public ResponseEntity<GenericResponse> updateBookById(@PathVariable String id, @RequestBody BookModel bookModel) {
+    public ResponseEntity<BookModel> updateBookById(@PathVariable String id, @RequestBody BookModel bookModel) {
         var updated = bookService.updateBook(bookModel, id);
-        return new ResponseEntity<>(GenericResponse.builder()
-                .code(HttpStatus.OK.toString())
-                .message("Book updated successfully")
-                .data(updated)
-                .build(), HttpStatus.OK);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

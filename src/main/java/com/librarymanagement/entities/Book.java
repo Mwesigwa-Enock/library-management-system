@@ -34,7 +34,7 @@ public class Book {
     private BookStatus status;
 
     @Column(name = "is_available")
-    private boolean isAvailable;
+    private boolean available;
 
     private String createdBy;
     private String modifiedBy;

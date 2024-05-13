@@ -1,6 +1,5 @@
 package com.librarymanagement.models;
 
-import com.librarymanagement.constants.BookActions;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class BookOperationModel implements Serializable {
     private String recordId;
     private PatronModel patron;
     private BookModel book;
-    private BookActions action;
+    private String action;
     private Timestamp createdOn;
     private Timestamp modifiedOn;
 }

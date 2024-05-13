@@ -59,8 +59,8 @@ public class BookService implements IBookService {
                 .publicationYear(bookRequest.getPublicationYear())
                 .isbn(bookRequest.getIsbn())
                 .status(BookStatus.ACTIVE)
-                .createdBy("SYSTEM")
-                .isAvailable(true)
+                .createdBy("SYSTEM") //TODO get user performing the action from claims
+                .available(true)
                 .isDeleted(false)
                 .build();
         var savedBook = bookRepository.save(book);
@@ -75,7 +75,13 @@ public class BookService implements IBookService {
         if (book.isPresent()) {
             ModelMapper mapper = new ModelMapper();
             var foundBook = book.get();
-            mapper.map(bookRequest, foundBook);
+            foundBook.setIsbn(bookRequest.getIsbn());
+            foundBook.setTitle(bookRequest.getTitle());
+            foundBook.setAuthor(bookRequest.getAuthor());
+            foundBook.setPublisher(bookRequest.getPublisher());
+            foundBook.setPublicationYear(bookRequest.getPublicationYear());
+            foundBook.setModifiedBy("SYSTEM");
+            foundBook.setStatus(BookStatus.valueOf(bookRequest.getStatus()));
             var updated = bookRepository.save(foundBook);
             var response = mapper.map(updated, BookModel.class);
             logger.info("The book with id {} is updated successfully", bookId);
