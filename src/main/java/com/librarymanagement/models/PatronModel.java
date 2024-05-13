@@ -15,7 +15,9 @@ import java.sql.Timestamp;
 public class PatronModel implements Serializable {
     private String patronId;
     private String name;
-    private String phone;
+    private String firstname;
+    private String lastname;
+    private String phoneNumber;
     private String email;
     private String address;
     private String city;

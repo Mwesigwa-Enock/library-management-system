@@ -1,14 +1,14 @@
 package com.librarymanagement.services;
 
-import com.librarymanagement.entities.Patron;
 import com.librarymanagement.models.PatronModel;
+import com.librarymanagement.payloads.CreatePatronRequest;
 
 import java.util.List;
 
 public interface IPatronService{
-    List<Patron> getAllPatrons();
+    List<PatronModel> getAllPatrons();
     PatronModel getPatronById(String patronId);
-    PatronModel createPatron(Patron patron);
-    PatronModel updatePatron(Patron patron);
+    PatronModel createPatron(CreatePatronRequest patronRequest);
+    PatronModel updatePatron(PatronModel patronModel, String patronId);
     void deletePatron(String patronId);
 }

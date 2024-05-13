@@ -12,4 +12,8 @@ public class StringHelper {
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
     }
+
+    public static String concatenateStrings(String str1, String str2){
+        return str1 + str2;
+    }
 }

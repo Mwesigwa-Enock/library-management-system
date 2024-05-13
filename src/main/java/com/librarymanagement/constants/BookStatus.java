@@ -4,5 +4,4 @@ public enum BookStatus {
     ACTIVE,
     INACTIVE,
     STOLEN
-
 }

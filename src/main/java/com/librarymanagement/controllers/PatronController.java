@@ -22,30 +22,38 @@ public class PatronController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create Patron", description = "Returns patron details")
     public ResponseEntity<PatronModel> createPatron(@RequestBody CreatePatronRequest patronRequest) {
-        return new ResponseEntity<>(PatronModel.builder().build(), HttpStatus.OK);
+        var patron = patronService.createPatron(patronRequest);
+        return new ResponseEntity<>(patron, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get All Patron", description = "Returns a List of Patron")
     public ResponseEntity<List<PatronModel>> getPatrons() {
-        return new ResponseEntity<>(List.of(), HttpStatus.OK);
+        var patrons = patronService.getAllPatrons();
+        return new ResponseEntity<>(patrons, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @Operation(summary = "Get Patron by Id", description = "Returns patron details")
     public ResponseEntity<PatronModel> getPatronById(@PathVariable String id) {
-        return new ResponseEntity<>(PatronModel.builder().build(), HttpStatus.OK);
+        var patron = patronService.getPatronById(id);
+        return new ResponseEntity<>(patron, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Operation(summary = "Update Patron by Id", description = "Returns patron details")
-    public ResponseEntity<GenericResponse> updatePatronById(@PathVariable String id, @RequestBody PatronModel patronModel) {
-        return new ResponseEntity<>(GenericResponse.builder().build(), HttpStatus.OK);
+    public ResponseEntity<PatronModel> updatePatronById(@PathVariable String id, @RequestBody PatronModel patronModel) {
+        var updated = patronService.updatePatron(patronModel, id);
+        return new ResponseEntity<>(updated, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @Operation(summary = "Delete Patron by Id", description = "Deletes Patron details")
     public ResponseEntity<GenericResponse> deletePatronById(@PathVariable String id) {
-        return new ResponseEntity<>(GenericResponse.builder().build(), HttpStatus.OK);
+        patronService.deletePatron(id);
+        return new ResponseEntity<>(GenericResponse.builder()
+                .code(HttpStatus.OK.toString())
+                .message("Patron deleted successfully").build(),
+                HttpStatus.OK);
     }
 }

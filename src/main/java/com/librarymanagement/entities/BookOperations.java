@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity
@@ -36,6 +37,12 @@ public class BookOperations {
 
     @Enumerated(EnumType.STRING)
     private BookActions action;
+
+    @Column(name = "borrowed_on")
+    private Date borrowedOn;
+
+    @Column(name = "returned_on")
+    private Date returnedOn;
 
     private String createdBy;
     private String modifiedBy;
