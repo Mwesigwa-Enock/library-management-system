@@ -4,7 +4,6 @@ import com.librarymanagement.constants.BookActions;
 import com.librarymanagement.entities.BookOperations;
 import com.librarymanagement.exceptions.NotFoundException;
 import com.librarymanagement.models.BookOperationModel;
-import com.librarymanagement.payloads.BookOperationRequest;
 import com.librarymanagement.repositories.BookOperationRepository;
 import com.librarymanagement.repositories.BookRepository;
 import com.librarymanagement.repositories.PatronRepository;
@@ -16,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -53,39 +54,73 @@ public class BookOperationService implements IBookOperationService {
 
     @Transactional
     @Override
-    public BookOperationModel createRecord(String bookId, String patronId, BookActions action) {
+    public BookOperationModel borrowBook(String bookId, String patronId) throws Exception {
         logger.info("Create Book Operation");
-        var book = bookRepository.findBybookId(bookId);
-        var patron = patronRepository.findByPatronId(patronId);
-        if (book.isPresent() && patron.isPresent()) {
-            var createdBy = StringHelper.concatenateStrings(patron.get().getFirstname(), patron.get().getLastname());
-            var record = BookOperations.builder()
-                    .book(book.get())
-                    .action(action)
-                    .patron(patron.get())
-                    .recordId(StringHelper.generateUuid())
-                    .createdBy(createdBy)
-                    .build();
-            var created = bookOperationRepository.save(record);
-            logger.info("Book Operation with id {} created", created.getRecordId());
+        var book = bookRepository.findByBookIdAndAvailable(bookId, true);
+        if (book.isPresent()) {
+            var patron = patronRepository.findByPatronId(patronId);
+            if (patron.isPresent()) {
+                var createdBy = StringHelper.concatenateStrings(patron.get().getFirstname(), patron.get().getLastname());
+                var record = BookOperations.builder()
+                        .book(book.get())
+                        .action(BookActions.BORROW)
+                        .patron(patron.get())
+                        .recordId(StringHelper.generateUuid())
+                        .borrowedOn(Date.valueOf(LocalDate.now()))
+                        .createdBy(createdBy)
+                        .build();
+                var created = bookOperationRepository.save(record);
+                logger.info("Book Operation with id {} created", created.getRecordId());
 
-            var available = action.name().equals("BORROW");
-            book.get().setAvailable(available);
-            bookRepository.save(book.get());
-            logger.info("Book with id {} updated", book.get().getBookId());
+                book.get().setAvailable(false);
+                bookRepository.save(book.get());
+                logger.info("Book with id {} updated", book.get().getBookId());
 
-            ModelMapper modelMapper = new ModelMapper();
-            return modelMapper.map(created, BookOperationModel.class);
+                ModelMapper modelMapper = new ModelMapper();
+                return modelMapper.map(created, BookOperationModel.class);
+            } else {
+                logger.error("Patron with id {} not found", patronId);
+                throw new NotFoundException("Invalid Book Operation");
+            }
         } else {
-            logger.error("Book Record with id {} and Patron with id {} Not found",
-                    book, patronId);
-            throw new NotFoundException("Invalid Book Operation");
+            logger.error("Book Record with id {} Not Available", bookId);
+            throw new Exception("Book already taken");
         }
 
     }
 
     @Override
-    public BookOperationModel updateRecord(BookOperations bookOperations) {
-        return null;
+    public BookOperationModel returnBook(String bookId, String patronId) throws Exception {
+        logger.info("Update Book Record Operation");
+        var book = bookRepository.findByBookIdAndAvailable(bookId, false);
+        if (book.isPresent()) {
+            var patron = patronRepository.findByPatronId(patronId);
+            if (patron.isPresent()) {
+                var bookRecord = bookOperationRepository.findByBook_BookIdAndPatron_PatronId(bookId, patronId);
+                if (bookRecord.isPresent()) {
+                    var modifiedBy = patron.get().getName();
+                    var record = bookRecord.get();
+                    record.setReturnedOn(Date.valueOf(LocalDate.now()));
+                    record.setModifiedBy(modifiedBy);
+                    record.setAction(BookActions.RETURN);
+                    bookOperationRepository.save(record);
+                    book.get().setAvailable(true);
+                    bookRepository.save(book.get());
+                    logger.info("Book status with id {} updated", book.get().getBookId());
+                    ModelMapper modelMapper = new ModelMapper();
+                    return modelMapper.map(bookRecord.get(), BookOperationModel.class);
+                } else {
+                    logger.error("Record with {} not found", bookId);
+                    throw new NotFoundException("Record with id " + bookId + " Not found in Records Table");
+                }
+            } else {
+                logger.error("Record with id {} and Patron with id {} Not found",
+                        book, patronId);
+                throw new NotFoundException("00ps! Invalid Book Operation");
+            }
+        } else {
+            logger.error("Book Record with id {} is Available", bookId);
+            throw new Exception("Book is available");
+        }
     }
 }

@@ -14,28 +14,35 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/")
+@RequestMapping("/api")
 public class BookOperationsController {
     private final BookOperationService bookOperationService;
 
-    @RequestMapping(value = "borrow/{bookId}/patron/{patronId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/borrow/{bookId}/patron/{patronId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Borrow Books", description = "Returns record details")
-    public ResponseEntity<BookOperationModel> borrowBook(@PathVariable String bookId, @PathVariable String patronId) {
-        var response = bookOperationService.createRecord(bookId, patronId, BookActions.BORROW);
+    public ResponseEntity<BookOperationModel> borrowBook(@PathVariable String bookId, @PathVariable String patronId) throws Exception {
+        var response = bookOperationService.borrowBook(bookId, patronId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "return/{bookId}/patron/{patronId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/return/{bookId}/patron/{patronId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Return Books", description = "Returns record details")
-    public ResponseEntity<BookOperationModel> returnBook(@PathVariable String bookId, @PathVariable String patronId) {
-        var response = bookOperationService.createRecord(bookId, patronId, BookActions.RETURN);
+    public ResponseEntity<BookOperationModel> returnBook(@PathVariable String bookId, @PathVariable String patronId) throws Exception {
+        var response = bookOperationService.returnBook(bookId, patronId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "get-records", method = RequestMethod.GET)
-    @Operation(summary = "Return All Borrowing Records", description = "Returns record details")
+    @RequestMapping(value = "/records", method = RequestMethod.GET)
+    @Operation(summary = "Return All Borrowing Records", description = "Returns records details")
     public ResponseEntity<List<BookOperationModel>> getAllRecords() {
         var response = bookOperationService.getAllRecords();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/records/{id}", method = RequestMethod.GET)
+    @Operation(summary = "Return Borrowing Record By Id", description = "Returns record details")
+    public ResponseEntity<BookOperationModel> getRecordById(@PathVariable String id) {
+        var response = bookOperationService.getRecordById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

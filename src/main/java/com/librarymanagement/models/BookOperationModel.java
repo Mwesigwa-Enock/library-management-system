@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 @Data
@@ -17,6 +18,8 @@ public class BookOperationModel implements Serializable {
     private PatronModel patron;
     private BookModel book;
     private String action;
+    private Date borrowedOn;
+    private Date returnedOn;
     private Timestamp createdOn;
     private Timestamp modifiedOn;
 }
