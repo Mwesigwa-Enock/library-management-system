@@ -42,7 +42,7 @@ public class PatronController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Operation(summary = "Update Patron by Id", description = "Returns patron details")
-    public ResponseEntity<PatronModel> updatePatronById(@PathVariable String id, @RequestBody PatronModel patronModel) {
+    public ResponseEntity<PatronModel> updatePatronById(@PathVariable String id, @RequestBody PatronModel patronModel) throws Exception {
         var updated = patronService.updatePatron(patronModel, id);
         return new ResponseEntity<>(updated, HttpStatus.OK);
     }

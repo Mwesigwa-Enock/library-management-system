@@ -48,8 +48,10 @@ public class PatronService implements IPatronService {
     @Override
     public PatronModel createPatron(CreatePatronRequest patronRequest) {
         logger.info("Create patron request");
+        var fullName = StringHelper.concatenateStrings(patronRequest.getLastName(), patronRequest.getFirstName());
         var patron = Patron.builder()
                 .email(patronRequest.getEmail())
+                .name(fullName)
                 .firstname(patronRequest.getFirstName())
                 .lastname(patronRequest.getLastName())
                 .phoneNumber(patronRequest.getPhoneNumber())
@@ -65,24 +67,31 @@ public class PatronService implements IPatronService {
     }
 
     @Override
-    public PatronModel updatePatron(PatronModel patronRequest, String patronId) {
-        logger.info("Update patron by id request");
-        var patron = patronRepository.findByPatronId(patronId);
-        if (patron.isPresent()) {
-            logger.info("Patron with - {} found", patronId);
-            var foundPatron = patron.get();
-            foundPatron.setEmail(patronRequest.getEmail());
-            foundPatron.setFirstname(patronRequest.getFirstname());
-            foundPatron.setLastname(patronRequest.getLastname());
-            foundPatron.setAddress(patronRequest.getAddress());
-            foundPatron.setPhoneNumber(patronRequest.getPhoneNumber());
-            var updated = patronRepository.save(foundPatron);
-            logger.info("Patron with id {} updated", patronId);
-            ModelMapper modelMapper = new ModelMapper();
-            return modelMapper.map(updated, PatronModel.class);
-        } else {
-            logger.error("Patron with - {} not found", patronId);
-            throw new NotFoundException("Patron with id " + patronId + " not found");
+    public PatronModel updatePatron(PatronModel patronRequest, String patronId) throws Exception {
+        try {
+            logger.info("Update patron by id request");
+            var patron = patronRepository.findByPatronId(patronId);
+            if (patron.isPresent()) {
+                logger.info("Patron with - {} found", patronId);
+                var name = StringHelper.concatenateStrings(patronRequest.getFirstname(), patronRequest.getLastname());
+                var foundPatron = patron.get();
+                foundPatron.setEmail(patronRequest.getEmail());
+                foundPatron.setFirstname(patronRequest.getFirstname());
+                foundPatron.setLastname(patronRequest.getLastname());
+                foundPatron.setAddress(patronRequest.getAddress());
+                foundPatron.setName(name);
+                foundPatron.setPhoneNumber(patronRequest.getPhoneNumber());
+                var updated = patronRepository.save(foundPatron);
+                logger.info("Patron with id {} updated", patronId);
+                ModelMapper modelMapper = new ModelMapper();
+                return modelMapper.map(updated, PatronModel.class);
+            } else {
+                logger.error("Patron with - {} not found", patronId);
+                throw new NotFoundException("Patron with id " + patronId + " not found");
+            }
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception("Failed to create book", e);
         }
     }
 

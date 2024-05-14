@@ -21,7 +21,7 @@ public class BookController {
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Create Book", description = "Returns book details")
-    public ResponseEntity<BookModel> createBook(@RequestBody CreateBookRequest bookRequest) {
+    public ResponseEntity<BookModel> createBook(@RequestBody CreateBookRequest bookRequest) throws Exception {
         var book = bookService.createBook(bookRequest);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }

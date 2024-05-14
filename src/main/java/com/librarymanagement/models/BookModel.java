@@ -20,6 +20,7 @@ public class BookModel implements Serializable {
     private String isbn;
     private String publisher;
     private String status;
+    private boolean available;
     private Timestamp createdOn;
     private Timestamp modifiedOn;
 }

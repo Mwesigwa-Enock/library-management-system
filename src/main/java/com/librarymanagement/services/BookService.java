@@ -48,7 +48,8 @@ public class BookService implements IBookService {
 
     @Transactional
     @Override
-    public BookModel createBook(CreateBookRequest bookRequest) {
+    public BookModel createBook(CreateBookRequest bookRequest) throws Exception {
+        try {
         logger.info("Create book request");
         var bookId = StringHelper.generateUuid();
         var book = Book.builder()
@@ -66,6 +67,10 @@ public class BookService implements IBookService {
         var savedBook = bookRepository.save(book);
         logger.info("The book with id {} is created successfully", bookId);
         return new ModelMapper().map(savedBook, BookModel.class);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new Exception("Failed to create book", e);
+        }
     }
 
     @Override

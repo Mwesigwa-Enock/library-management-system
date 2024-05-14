@@ -23,7 +23,7 @@ public class Patron {
     private String patronId;
     private String firstname;
     private String lastname;
-
+    private String name;
     @Column(unique = true, nullable = false)
     private String phoneNumber;
 

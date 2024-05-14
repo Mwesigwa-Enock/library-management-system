@@ -1,5 +1,6 @@
 package com.librarymanagement.models;
 
+import com.librarymanagement.utils.StringHelper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,6 @@ public class PatronModel implements Serializable {
     private String phoneNumber;
     private String email;
     private String address;
-    private String city;
     private String status;
     private Timestamp createdOn;
     private Timestamp modifiedOn;
